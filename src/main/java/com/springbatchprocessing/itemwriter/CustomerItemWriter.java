@@ -3,12 +3,12 @@ package com.springbatchprocessing.itemwriter;
 import com.springbatchprocessing.entity.Customer;
 import lombok.NonNull;
 
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 
 @Component
@@ -35,7 +35,7 @@ public class CustomerItemWriter implements ItemWriter<Customer> {
     }
 
     @Override
-    public void write(@NonNull List<? extends Customer> chunk) {
+    public void write(@NonNull Chunk<? extends Customer> chunk) {
         if (!tableExists) {
             createTable();
             tableExists = true;
