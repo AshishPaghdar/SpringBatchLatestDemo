@@ -3,6 +3,7 @@ package com.springbatchprocessing.itemwriter;
 import com.springbatchprocessing.entity.Customer;
 import lombok.NonNull;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
+@Slf4j
 public class CustomerItemWriter implements ItemWriter<Customer> {
 
     private final JdbcTemplate jdbcTemplate;
@@ -36,6 +38,15 @@ public class CustomerItemWriter implements ItemWriter<Customer> {
 
     @Override
     public void write(@NonNull Chunk<? extends Customer> chunk) {
+        String currentResource = null;
+
+        if (!chunk.isEmpty()) {
+            currentResource = chunk.getItems().getFirst().getResourceFileName();
+        }
+
+        if (currentResource != null) {
+            log.info("Processing Customer Item from : {}", currentResource);
+        }
         if (!tableExists) {
             createTable();
             tableExists = true;
