@@ -6,15 +6,12 @@ import com.springbatchprocessing.itemwriter.CustomerItemWriter;
 import com.springbatchprocessing.tasklet.DataCleansingTasklet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.annotation.AfterStep;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -30,7 +27,6 @@ public class BatchConfig {
     private final DataSource dataSource;
     private final MultiResourceItemReader<Customer> customerItemReader;
 
-    private Resource currentResource;
 
     public BatchConfig(DataCleansingTasklet dataCleansingTasklet, JobRepository jobRepository, PlatformTransactionManager transactionManager, DataSource dataSource, MultiResourceItemReader<Customer> customerItemReader) {
         this.dataCleansingTasklet = dataCleansingTasklet;
@@ -66,15 +62,4 @@ public class BatchConfig {
                 .build();
     }
 
-    @BeforeStep
-    public void beforeStep(StepExecution stepExecution) {
-        this.currentResource= stepExecution.getExecutionContext().containsKey("currentResource") ? (Resource) stepExecution.getExecutionContext().get("currentResource") : null;
-    }
-
-    @AfterStep
-    public void afterStep(StepExecution stepExecution) {
-        if (currentResource != null) {
-            System.out.println("Currently processing resource: " + currentResource.getFilename());
-        }
-    }
 }
